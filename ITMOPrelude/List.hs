@@ -5,75 +5,75 @@ import Prelude (Show,Read,error)
 import ITMOPrelude.Primitive
 
 ---------------------------------------------
--- Что надо делать?
+-- Р§С‚Рѕ РЅР°РґРѕ РґРµР»Р°С‚СЊ?
 --
--- Все undefined превратить в требуемые термы.
--- Звёздочкой (*) отмечены места, в которых может потребоваться думать.
+-- Р’СЃРµ undefined РїСЂРµРІСЂР°С‚РёС‚СЊ РІ С‚СЂРµР±СѓРµРјС‹Рµ С‚РµСЂРјС‹.
+-- Р—РІС‘Р·РґРѕС‡РєРѕР№ (*) РѕС‚РјРµС‡РµРЅС‹ РјРµСЃС‚Р°, РІ РєРѕС‚РѕСЂС‹С… РјРѕР¶РµС‚ РїРѕС‚СЂРµР±РѕРІР°С‚СЊСЃСЏ РґСѓРјР°С‚СЊ.
 
 ---------------------------------------------
--- Определение
+-- РћРїСЂРµРґРµР»РµРЅРёРµ
 
 data List a = Nil |  Cons a (List a) deriving (Show,Read)
 
 ---------------------------------------------
--- Операции
+-- РћРїРµСЂР°С†РёРё
 
--- Длина списка
+-- Р”Р»РёРЅР° СЃРїРёСЃРєР°
 length :: List a -> Nat
 length Nil = Zero
 length (Cons x xs) = Succ (length xs)
 
--- Склеить два списка за O(length a)
+-- РЎРєР»РµРёС‚СЊ РґРІР° СЃРїРёСЃРєР° Р·Р° O(length a)
 (++) :: List a -> List a -> List a
 Nil ++ l = l
 (Cons x xs) ++ l = Cons x (xs ++ l)
 
--- Список без первого элемента
+-- РЎРїРёСЃРѕРє Р±РµР· РїРµСЂРІРѕРіРѕ СЌР»РµРјРµРЅС‚Р°
 tail :: List a -> List a
 tail Nil = Nil
 tail (Cons x xs) = xs
 
--- Список без последнего элемента
+-- РЎРїРёСЃРѕРє Р±РµР· РїРѕСЃР»РµРґРЅРµРіРѕ СЌР»РµРјРµРЅС‚Р°
 init :: List a -> List a
 init Nil = Nil
 init (Cons x Nil) = Nil
 init (Cons x xs) = Cons x (init xs)
 
--- Первый элемент
+-- РџРµСЂРІС‹Р№ СЌР»РµРјРµРЅС‚
 head :: List a -> a
 head (Cons x xs) = x
 
--- Последний элемент
+-- РџРѕСЃР»РµРґРЅРёР№ СЌР»РµРјРµРЅС‚
 last :: List a -> a
 last (Cons x Nil) = x
 last (Cons x xs) = last xs
 
--- n первых элементов списка
+-- n РїРµСЂРІС‹С… СЌР»РµРјРµРЅС‚РѕРІ СЃРїРёСЃРєР°
 take :: Nat -> List a -> List a
 take Zero l = Nil
 take (Succ n) (Cons x xs) = Cons x (take n xs)
 
--- Список без n первых элементов
+-- РЎРїРёСЃРѕРє Р±РµР· n РїРµСЂРІС‹С… СЌР»РµРјРµРЅС‚РѕРІ
 drop :: Nat -> List a -> List a
 drop Zero l = l
 drop (Succ n) (Cons x xs) = drop n xs
 
--- Оставить в списке только элементы удовлетворяющие p
+-- РћСЃС‚Р°РІРёС‚СЊ РІ СЃРїРёСЃРєРµ С‚РѕР»СЊРєРѕ СЌР»РµРјРµРЅС‚С‹ СѓРґРѕРІР»РµС‚РІРѕСЂСЏСЋС‰РёРµ p
 filter :: (a -> Bool) -> List a -> List a
 filter p Nil = Nil
 filter p (Cons x xs) = if' (p x)
 			(Cons x (filter p xs))
 			(filter p xs)
 
--- Обобщённая версия. Вместо "выбросить/оставить" p
--- говорит "выбросить/оставить b".
+-- РћР±РѕР±С‰С‘РЅРЅР°СЏ РІРµСЂСЃРёСЏ. Р’РјРµСЃС‚Рѕ "РІС‹Р±СЂРѕСЃРёС‚СЊ/РѕСЃС‚Р°РІРёС‚СЊ" p
+-- РіРѕРІРѕСЂРёС‚ "РІС‹Р±СЂРѕСЃРёС‚СЊ/РѕСЃС‚Р°РІРёС‚СЊ b".
 gfilter :: (a -> Maybe b) -> List a -> List b
 gfilter p Nil = Nil
 gfilter p (Cons x xs) = case (p x) of
 			(Just b) -> Cons b (gfilter p xs)
 			Nothing -> gfilter p xs
 
--- Копировать из списка в результат до первого нарушения предиката
+-- РљРѕРїРёСЂРѕРІР°С‚СЊ РёР· СЃРїРёСЃРєР° РІ СЂРµР·СѓР»СЊС‚Р°С‚ РґРѕ РїРµСЂРІРѕРіРѕ РЅР°СЂСѓС€РµРЅРёСЏ РїСЂРµРґРёРєР°С‚Р°
 -- takeWhile (< 3) [1,2,3,4,1,2,3,4] == [1,2]
 takeWhile :: (a -> Bool) -> List a -> List a
 takeWhile p Nil = Nil
@@ -81,8 +81,8 @@ takeWhile p (Cons x xs) = if' (p x)
 			(Cons x (takeWhile p xs))
 			(Cons x Nil)
 
--- Не копировать из списка в результат до первого нарушения предиката,
--- после чего скопировать все элементы, включая первый нарушивший
+-- РќРµ РєРѕРїРёСЂРѕРІР°С‚СЊ РёР· СЃРїРёСЃРєР° РІ СЂРµР·СѓР»СЊС‚Р°С‚ РґРѕ РїРµСЂРІРѕРіРѕ РЅР°СЂСѓС€РµРЅРёСЏ РїСЂРµРґРёРєР°С‚Р°,
+-- РїРѕСЃР»Рµ С‡РµРіРѕ СЃРєРѕРїРёСЂРѕРІР°С‚СЊ РІСЃРµ СЌР»РµРјРµРЅС‚С‹, РІРєР»СЋС‡Р°СЏ РїРµСЂРІС‹Р№ РЅР°СЂСѓС€РёРІС€РёР№
 -- dropWhile (< 3) [1,2,3,4,1,2,3,4] == [3,4,1,2,3,4]
 dropWhile :: (a -> Bool) -> List a -> List a
 dropWhile p Nil = Nil
@@ -90,50 +90,50 @@ dropWhile p (Cons x xs) = if' (p x)
 			(dropWhile p xs)
 			(Cons x xs)
 
--- Разбить список по предикату на (takeWhile p xs, dropWhile p xs),
--- но эффективнее
+-- Р Р°Р·Р±РёС‚СЊ СЃРїРёСЃРѕРє РїРѕ РїСЂРµРґРёРєР°С‚Сѓ РЅР° (takeWhile p xs, dropWhile p xs),
+-- РЅРѕ СЌС„С„РµРєС‚РёРІРЅРµРµ
 span :: (a -> Bool) -> List a -> Pair (List a) (List a)
 span p Nil = Pair Nil Nil
 span p (Cons x xs) = if' (p x) 
 			(Pair (Cons x (fst $ span p xs))(snd $ span p xs))
 			(Pair Nil (Cons x xs))
 
--- Разбить список по предикату на (takeWhile (not . p) xs, dropWhile (not . p) xs),
--- но эффективнее
+-- Р Р°Р·Р±РёС‚СЊ СЃРїРёСЃРѕРє РїРѕ РїСЂРµРґРёРєР°С‚Сѓ РЅР° (takeWhile (not . p) xs, dropWhile (not . p) xs),
+-- РЅРѕ СЌС„С„РµРєС‚РёРІРЅРµРµ
 break :: (a -> Bool) -> List a -> Pair (List a) (List a)
 break p l = span (not . p) l
 
--- n-ый элемент списка (считая с нуля)
+-- n-С‹Р№ СЌР»РµРјРµРЅС‚ СЃРїРёСЃРєР° (СЃС‡РёС‚Р°СЏ СЃ РЅСѓР»СЏ)
 (!!) :: List a -> Nat -> a
 Nil !! n = error "!!: empty list"
 (Cons x xs)  !! Zero = x
 (Cons x xs) !! (Succ n) = xs !! n
 
--- Список задом на перёд
+-- РЎРїРёСЃРѕРє Р·Р°РґРѕРј РЅР° РїРµСЂС‘Рґ
 reverse :: List a -> List a
 reverse Nil = Nil
 reverse (Cons x xs) = (reverse xs) ++ (Cons x Nil)
 
--- (*) Все подсписки данного списка
+-- (*) Р’СЃРµ РїРѕРґСЃРїРёСЃРєРё РґР°РЅРЅРѕРіРѕ СЃРїРёСЃРєР°
 subsequences :: List a -> List (List a)
 subsequences Nil = Cons Nil Nil
 subsequences (Cons x xs) = map (Cons x) (subsequences xs) ++ subsequences xs
 
--- (*) Все перестановки элементов данного списка
+-- (*) Р’СЃРµ РїРµСЂРµСЃС‚Р°РЅРѕРІРєРё СЌР»РµРјРµРЅС‚РѕРІ РґР°РЅРЅРѕРіРѕ СЃРїРёСЃРєР°
 permutations :: List a -> List (List a)
 permutations = undefined
 
--- (*) Если можете. Все перестановки элементов данного списка
--- другим способом
+-- (*) Р•СЃР»Рё РјРѕР¶РµС‚Рµ. Р’СЃРµ РїРµСЂРµСЃС‚Р°РЅРѕРІРєРё СЌР»РµРјРµРЅС‚РѕРІ РґР°РЅРЅРѕРіРѕ СЃРїРёСЃРєР°
+-- РґСЂСѓРіРёРј СЃРїРѕСЃРѕР±РѕРј
 permutations' :: List a -> List (List a)
 permutations' = undefined
 
--- Повторяет элемент бесконечное число раз
+-- РџРѕРІС‚РѕСЂСЏРµС‚ СЌР»РµРјРµРЅС‚ Р±РµСЃРєРѕРЅРµС‡РЅРѕРµ С‡РёСЃР»Рѕ СЂР°Р·
 repeat :: a -> List a
 repeat l = Cons l (repeat l)
 
--- Левая свёртка
--- порождает такое дерево вычислений:
+-- Р›РµРІР°СЏ СЃРІС‘СЂС‚РєР°
+-- РїРѕСЂРѕР¶РґР°РµС‚ С‚Р°РєРѕРµ РґРµСЂРµРІРѕ РІС‹С‡РёСЃР»РµРЅРёР№:
 --         f
 --        / \
 --       f   ...
@@ -147,14 +147,14 @@ foldl :: (a -> b -> a) -> a -> List b -> a
 foldl f z Nil = z
 foldl f z (Cons x xs) = foldl f (f z x) xs
 
--- Тот же foldl, но в списке оказываются все промежуточные результаты
+-- РўРѕС‚ Р¶Рµ foldl, РЅРѕ РІ СЃРїРёСЃРєРµ РѕРєР°Р·С‹РІР°СЋС‚СЃСЏ РІСЃРµ РїСЂРѕРјРµР¶СѓС‚РѕС‡РЅС‹Рµ СЂРµР·СѓР»СЊС‚Р°С‚С‹
 -- last (scanl f z xs) == foldl f z xs
 scanl :: (a -> b -> a) -> a -> List b -> List a
 scanl f z Nil = Cons z Nil
 scanl f z (Cons x xs) = Cons (f z x) (scanl f (f z x) xs) 
 
--- Правая свёртка
--- порождает такое дерево вычислений:
+-- РџСЂР°РІР°СЏ СЃРІС‘СЂС‚РєР°
+-- РїРѕСЂРѕР¶РґР°РµС‚ С‚Р°РєРѕРµ РґРµСЂРµРІРѕ РІС‹С‡РёСЃР»РµРЅРёР№:
 --    f
 --   /  \
 -- l!!0  f
@@ -169,37 +169,37 @@ foldr :: (a -> b -> b) -> b -> List a -> b
 foldr f z Nil = z
 foldr f z (Cons x xs) = f x (foldr f z xs)
 
--- Аналогично
+-- РђРЅР°Р»РѕРіРёС‡РЅРѕ
 --  head (scanr f z xs) == foldr f z xs.
 scanr :: (a -> b -> b) -> b -> List a -> List b
 scanr f z Nil = Cons z Nil
 scanr f z (Cons x xs) = Cons (f x y) ys where (Cons y ys) = scanr f z xs
 
--- Должно завершаться за конечное время
+-- Р”РѕР»Р¶РЅРѕ Р·Р°РІРµСЂС€Р°С‚СЊСЃСЏ Р·Р° РєРѕРЅРµС‡РЅРѕРµ РІСЂРµРјСЏ
 finiteTimeTest = take (Succ $ Succ $ Succ $ Succ Zero) $ foldr (Cons) Nil $ repeat Zero
 
--- Применяет f к каждому элементу списка
+-- РџСЂРёРјРµРЅСЏРµС‚ f Рє РєР°Р¶РґРѕРјСѓ СЌР»РµРјРµРЅС‚Сѓ СЃРїРёСЃРєР°
 map :: (a -> b) -> List a -> List b
 map f (Cons x Nil) = Cons (f x) Nil
 map f (Cons x xs) = Cons (f x) (map f xs)
 
--- Склеивает список списков в список
+-- РЎРєР»РµРёРІР°РµС‚ СЃРїРёСЃРѕРє СЃРїРёСЃРєРѕРІ РІ СЃРїРёСЃРѕРє
 concat :: List (List a) -> List a
 concat Nil = Nil
 concat (Cons x xs) = x ++ (concat xs)
 
--- Эквивалент (concat . map), но эффективнее
+-- Р­РєРІРёРІР°Р»РµРЅС‚ (concat . map), РЅРѕ СЌС„С„РµРєС‚РёРІРЅРµРµ
 concatMap :: (a -> List b) -> List a -> List b
 concatMap f Nil = Nil
 concatMap f (Cons x xs) = (f x) ++ (concatMap f xs)
 
--- Сплющить два списка в список пар длинны min (length a, length b)
+-- РЎРїР»СЋС‰РёС‚СЊ РґРІР° СЃРїРёСЃРєР° РІ СЃРїРёСЃРѕРє РїР°СЂ РґР»РёРЅРЅС‹ min (length a, length b)
 zip :: List a -> List b -> List (Pair a b)
 zip Nil b = Nil
 zip a Nil = Nil
 zip (Cons x xs) (Cons y ys) = Cons (Pair x y) (zip xs ys)
 
--- Аналогично, но плющить при помощи функции, а не конструктором Pair
+-- РђРЅР°Р»РѕРіРёС‡РЅРѕ, РЅРѕ РїР»СЋС‰РёС‚СЊ РїСЂРё РїРѕРјРѕС‰Рё С„СѓРЅРєС†РёРё, Р° РЅРµ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРѕРј Pair
 zipWith :: (a -> b -> c) -> List a -> List b -> List c
 zipWith f Nil b = Nil
 zipWith f a Nil = Nil  
