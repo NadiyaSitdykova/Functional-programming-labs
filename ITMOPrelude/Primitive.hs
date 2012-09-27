@@ -185,7 +185,7 @@ infixl 6 .+., .-.
 (.-.) :: Int -> Int -> Int
 n .-. m = n .+. (intNeg m)
 
-infixl 7 .*.
+infixl 7 .*. 
 (.*.) :: Int -> Int -> Int
 (Pos n) .*. (Pos m) = Pos (n *. m)
 (Pos n) .*. (Neg m) = intNeg . Pos  $ n *. (Succ m)
@@ -195,7 +195,7 @@ infixl 7 .*.
 -------------------------------------------
 -- Рациональные числа
 
-data Rat = Rat Int Nat
+data Rat = Rat Int Nat deriving (Show,Read)
 
 ratNeg :: Rat -> Rat
 ratNeg (Rat x y) = Rat (intNeg x) y
@@ -216,17 +216,25 @@ ratEq (Rat n m) (Rat x y) = intEq (n .*. (Pos y)) (x .*. (Pos m))
 ratLt :: Rat -> Rat -> Bool
 ratLt (Rat n m) (Rat x y) = intLt (n .*. (Pos y)) (x .*. (Pos m))
 
+reduce :: Rat -> Rat
+reduce (Rat (Pos Zero) _) = Rat (Pos Zero) (Succ Zero)
+reduce (Rat (Pos n) m) = Rat (Pos (natDiv n (gcd n m))) (natDiv m (gcd n m)) 
+reduce (Rat (Neg n) m) = Rat (Neg ((natDiv (Succ n) (gcd (Succ n) m)) -. (Succ Zero))) (natDiv m (gcd (Succ n) m)) 
 
 infixl 7 %+, %-
 (%+) :: Rat -> Rat -> Rat
-(Rat n m) %+ (Rat a b) = Rat ((n .*. (Pos b)) .+. (a .*. (Pos m))) (m *. b)
+(Rat n Zero) %+ (Rat a _) = error "Denaminator is Zero"
+(Rat n _) %+ (Rat a Zero) = error "Denaminator is Zero"
+(Rat n m) %+ (Rat a b) = reduce (Rat ((n .*. (Pos b)) .+. (a .*. (Pos m))) (m *. b))
 
 (%-) :: Rat -> Rat -> Rat
-n %- m = n %+ (ratNeg m)
+n %- m = n %+ (ratNeg m))
 
 infixl 7 %*, %/
 (%*) :: Rat -> Rat -> Rat
-(Rat n m) %* (Rat a b) = Rat (n .*. a) (m *. b)
+(Rat n Zero) %* (Rat a _) = error "Denaminator is Zero"
+(Rat n _) %* (Rat a Zero) = error "Denaminator is Zero"
+(Rat n m) %* (Rat a b) = reduce (Rat (n .*. a) (m *. b))
 
 (%/) :: Rat -> Rat -> Rat
 n %/ m = n %* (ratInv m)
