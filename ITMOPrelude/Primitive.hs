@@ -159,15 +159,15 @@ intCmp n m = if' (intLt n m) (LT) (if' (intEq n m ) (EQ) (GT))
 
 
 intEq :: Int -> Int -> Bool
-intEq (Pos n) (Neg m) False
-intEq (Neg n) (Pos m) False
+intEq (Pos n) (Neg m) = False
+intEq (Neg n) (Pos m) = False
 intEq (Pos n) (Pos m) = natEq n m
 intEq (Neg n) (Neg m) = natEq m n
 
 
 intLt :: Int -> Int -> Bool
-intLt (Pos n) (Neg m) False
-intLt (Neg n) (Pos m) True
+intLt (Pos n) (Neg m) = False
+intLt (Neg n) (Pos m) = True
 intLt (Pos n) (Pos m) = natLt n m
 intLt (Neg n) (Neg m) = natLt m n
 
@@ -177,8 +177,8 @@ infixl 6 .+., .-.
 (Pos (Succ n)) .+. (Neg Zero) = Pos n
 (Pos n) .+. (Pos m) = Pos (n +. m)
 (Neg n) .+. (Neg m) = Neg (Succ (n +. m))
-(Pos n) .+. (Neg m) = if' (m natLt n) 
-			(n -. m)
+(Pos n) .+. (Neg m) = if' (natLt m n) 
+			(Pos (n -. (Succ m)))
 			(Neg (m -. n))
 (Neg n) .+. (Pos m) = Pos m .+. Neg n
 
@@ -188,7 +188,7 @@ n .-. m = n .+. (intNeg m)
 infixl 7 .*.
 (.*.) :: Int -> Int -> Int
 (Pos n) .*. (Pos m) = Pos (n *. m)
-(Pos n) .*. (Neg m) = intNeg . Pos (n *. (Succ m))
+(Pos n) .*. (Neg m) = intNeg . Pos  $ n *. (Succ m)
 (Neg n) .*. (Neg m) = Pos ((Succ n) *. (Succ m))
 (Neg n) .*. (Pos m) = (Pos m) .*. (Neg n)
 
