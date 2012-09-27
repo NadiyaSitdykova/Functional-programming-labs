@@ -38,12 +38,12 @@ rotR Nil = Nil
 rotR (Node h Nil r) = Node h Nil r
 rotR (Node h (Node l ll lr) r) = Node l ll (Node h lr r)
 
--- map
+-- аналог map
 map :: (a -> b) -> Tree a -> Tree b
 map f Nil = Nil
 map f (Node h l r) = Node (f h) (map f l) (map f r)
 
--- foldr
+-- аналог foldr
 foldr :: (a -> b -> b) -> b -> Tree a -> b
 foldr f b Nil = b
 foldr f b (Node h l r) = foldr f (f h (foldr f b r)) l
