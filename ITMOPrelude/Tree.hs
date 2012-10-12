@@ -7,43 +7,43 @@ import Prelude (Show,Read,error)
 
 data Tree a = Nil | Node a (Tree a) (Tree a) deriving (Show,Read)
 
--- ñîçäàíèå ïóñòîãî äåðåâà
+-- ÑÐ¾Ð·Ð´Ð°Ð½Ð¸Ðµ Ð¿ÑƒÑÑ‚Ð¾Ð³Ð¾ Ð´ÐµÑ€ÐµÐ²Ð°
 newTree :: Tree a
 newTree = Nil
 
--- äîáàâëåíèå ýëåìåíòà â âåðøèíó äåðåâà
+-- Ð´Ð¾Ð±Ð°Ð²Ð»ÐµÐ½Ð¸Ñ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð° Ð² Ð²ÐµÑ€ÑˆÐ¸Ð½Ñƒ Ð´ÐµÑ€ÐµÐ²Ð°
 addHead :: Tree a -> a -> Tree a
 addHead Nil x = Node x Nil Nil
 addHead (Node h l r) x = Node x l r
 
--- äîáàâëåíèå ýëåìåíòà â êà÷åñòâå ñàìîãî ëåâîãî
+Ð´Ð¾Ð±Ð°Ð²Ð»ÐµÐ½Ð¸Ðµ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð° Ð² ÐºÐ°Ñ‡ÐµÑÑ‚Ð²Ðµ ÑÐ°Ð¼Ð¾Ð³Ð¾ Ð»ÐµÐ²Ð¾Ð³Ð¾
 addLeft :: Tree a -> a -> Tree a
 addLeft Nil x = Node x Nil Nil
 addLeft (Node h l r) x = addLeft l x
                                               
--- äîáàâëåíèå ýëåìåíòà â êà÷åñòâå ñàìîãî ïðàâîãî
+Ð´Ð¾Ð±Ð°Ð²Ð»ÐµÐ½Ð¸Ðµ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð° Ð² ÐºÐ°Ñ‡ÐµÑÑ‚Ð²Ðµ ÑÐ°Ð¼Ð¾Ð³Ð¾ Ð¿Ñ€Ð°Ð²Ð¾Ð³Ð¾
 addRight :: Tree a -> x -> Tree a
 addRigth Nil x = Node x Nil Nil
 addRight (Node h l r) x = addRight r x
 
--- ïîâîðîò âëåâî (ìàëûé)
+-- Ð¿Ð¾Ð²Ð¾Ñ€Ð¾Ñ‚ Ð²Ð»ÐµÐ²Ð¾ (Ð¼Ð°Ð»Ñ‹Ð¹)
 rotL :: Tree a -> Tree a
 rotL Nil = Nil
 rotL (Node h l Nil) = Node h l Nil
 rotL (Node h l (Node r rl rr)) = Node r (Node h l rl) rr
 
--- ïîâîðîò âïðàâî (ìàëûé)
+-- Ð¿Ð¾Ð²Ð¾Ñ€Ð¾Ñ‚ Ð²Ð¿Ñ€Ð°Ð²Ð¾ (Ð¼Ð°Ð»Ñ‹Ð¹)
 rotR :: Tree a -> Tree a
 rotR Nil = Nil
 rotR (Node h Nil r) = Node h Nil r
 rotR (Node h (Node l ll lr) r) = Node l ll (Node h lr r)
 
--- àíàëîã map
+-- Ð°Ð½Ð°Ð»Ð¾Ð³ map
 map :: (a -> b) -> Tree a -> Tree b
 map f Nil = Nil
 map f (Node h l r) = Node (f h) (map f l) (map f r)
 
--- àíàëîã foldr
+-- Ð°Ð½Ð°Ð»Ð¾Ð³ foldr
 foldr :: (a -> b -> b) -> b -> Tree a -> b
 foldr f b Nil = b
 foldr f b (Node h l r) = foldr f (f h (foldr f b r)) l
