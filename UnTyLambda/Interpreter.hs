@@ -16,7 +16,7 @@ import Control.Exception
 type Variable = String
 data Term = Var Variable | Lam Variable Term | App Term Term deriving (Show,Read)
 
-------------------------------------------------------------
+----------------------------------------------------------
 -- Дальше всё на ваше усмотрение
                                                                                                                                                
 -- Если внутри будете использовать именованное представление, то
