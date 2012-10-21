@@ -55,18 +55,72 @@ wh, no, wa, sa :: Integer -> Term -> Term
 
 -- Редукция аппликативным порядком
 sa 0 t = error $ "Too long sequence at [" ++ show t ++ "]"
-sa n t = undefined
+sa n t = if fst next then sa (n - 1) (snd next)
+		     else snd next
+		     	where next = sa' t
+
+
+sa' :: Term -> (Bool, Term)
+sa' (Lam v t) = (fst next, Lam v (snd next))
+			where next = sa' t
+sa' (App (Lam v t) t') = if fst next then (True, App (Lam v (snd next)) t') 
+				     else (True, betaRed t v t')
+				     	where next = sa' t
+sa' (App t t')	= let next = sa' t
+		      next' = sa' t'
+		      in if fst next then (True, App (snd next) t')
+				     else (fst next', App t (snd next'))	
+sa' term = (False, term)
 
 -- Нормализация нормальным порядком
-no = undefined
+no 0 t = error $ "Too long sequence at [" ++ show t ++ "]"
+no n t = if fst next then no (n - 1) (snd next)
+		     else snd next
+		     	where next = no' t
+
+no' :: Term -> (Bool, Term)
+no' (Lam v t) = (fst next, Lam v (snd next))
+			where next = no' t
+no' (App (Lam v t) t') = (True, betaRed t v t')
+no' (App t t')	= let next = no' t
+		      next' = no' t'
+		      in if fst next then (True, App (snd next) t')
+				     else (fst next', App t (snd next'))	
+no' term = (False, term)
+
 
 -- Редукция в слабую головную нормальную форму
-wh = undefined
+wh 0 t = error $ "Too long sequence at [" ++ show t ++ "]"
+wh n t = if fst next then wh (n - 1) (snd next)
+		     else snd next
+		     	where next = wh' t
+
+wh' :: Term -> (Bool, Term)
+wh' (App (Lam v t) t') = (True, betaRed t v t')
+wh' (App t t')	= let next = wh' t
+		      next' = wh' t'
+		      in if fst next then (True, App (snd next) t')
+				     else (fst next', App t (snd next'))	
+wh' term = (False, term)
 
 -- (*) (не обязательно) Редукция "слабым" аппликативным порядком.
 -- Отличается от обычного аппликативного тем, что не лезет внутрь
 -- лямбд и правые части аппликаций, когда это возможно.
-wa = undefined
+
+wa 0 t = error $ "Too long sequence at [" ++ show t ++ "]"
+wa n t = if fst next then wa (n - 1) (snd next)
+		     else snd next
+		     	where next = wa' t
+
+
+wa' :: Term -> (Bool, Term)
+wa' (App (Lam v t) t') = (True, betaRed t v t')
+wa' (App t t')	= let next = sa' t
+		      next' = sa' t'
+		      in if fst next then (True, App (snd next) t')
+				     else (fst next', App t (snd next'))	
+wa' term = (False, term)
+
 
 -- Замечание: cкорость работы вашего интерпретатора специально не оценивается,
 -- потому можно использовать свой изоморфный (с точностью до альфа-конверсии)
@@ -77,7 +131,7 @@ wa = undefined
 orders =
     [ ("wh", wh)
     , ("no", no)
---    , ("wa", wa) -- Можно раскоментировать, да
+    , ("wa", wa) -- Можно раскоментировать, да
     , ("sa", sa) ]
 
 ------------------------------------------------------------
