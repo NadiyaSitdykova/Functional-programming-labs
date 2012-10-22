@@ -228,7 +228,7 @@ infixl 7 %+, %-
 (Rat n m) %+ (Rat a b) = reduce (Rat ((n .*. (Pos b)) .+. (a .*. (Pos m))) (m *. b))
 
 (%-) :: Rat -> Rat -> Rat
-n %- m = n %+ (ratNeg m))
+n %- m = n %+ (ratNeg m)
 
 infixl 7 %*, %/
 (%*) :: Rat -> Rat -> Rat

@@ -16,12 +16,12 @@ addHead :: Tree a -> a -> Tree a
 addHead Nil x = Node x Nil Nil
 addHead (Node h l r) x = Node x l r
 
-добавление элемента в качестве самого левого
+-- добавление элемента в качестве самого левого
 addLeft :: Tree a -> a -> Tree a
 addLeft Nil x = Node x Nil Nil
 addLeft (Node h l r) x = addLeft l x
                                               
-добавление элемента в качестве самого правого
+--добавление элемента в качестве самого правого
 addRight :: Tree a -> x -> Tree a
 addRigth Nil x = Node x Nil Nil
 addRight (Node h l r) x = addRight r x
