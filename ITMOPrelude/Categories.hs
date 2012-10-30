@@ -4,31 +4,41 @@ module ITMOPrelude.Categories where
 import ITMOPrelude.List
 import ITMOPrelude.Tree
 
-class Category f where
-        id :: f a a
-        (.) :: f b c -> f a b -> f a c
-
-
+class Category cat where
+        id :: cat a a
+        (.) :: cat b c -> cat a b -> cat a c
 
 class Functor f where
         fmap :: (a -> b) -> f a -> f b
 
 
-instance Functor List where
-        fmap f = map f
-
-instance Functor Tree where
-        fmap f = tmap f  
-
-
-
 class Monad m where
 	return :: a -> m a
   	(>>=) :: m a -> (a -> m b) -> m b
-  	(>>) :: m a -> m b -> m b
-	a >> b = a >>= (\_ -> b)
 
+
+(>>) :: Monad m => m a -> m b -> m b
+ma >> mb = ma >>= (\_ -> mb)
+
+
+
+instance Category (->) where
+	id = \a -> a
+	f . g = \x -> f (g x)
+
+instance Functor List where
+        fmap = map 
+
+instance Functor Tree where
+        fmap = tmap   
 
 instance Monad List where
         return a = Cons a Nil
-        a >>= f = concat $ map f a
+        a >>= f = concatMap f a
+
+
+--newtype State s a = State { runState :: s -> (s, a) }
+
+--instance Monad (State s) where
+--	return = ?
+--	(>>=) = ?
