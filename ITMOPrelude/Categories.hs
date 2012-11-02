@@ -1,6 +1,7 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 module ITMOPrelude.Categories where
 
+import ITMOPrelude.Primitive
 import ITMOPrelude.List
 import ITMOPrelude.Tree
 
@@ -37,8 +38,10 @@ instance Monad List where
         a >>= f = concatMap f a
 
 
---newtype State s a = State { runState :: s -> (s, a) }
+newtype State s a = State { runState :: s -> (s, a) }
 
---instance Monad (State s) where
---	return = ?
---	(>>=) = ?
+instance Monad (State s) where
+	return x = State (\s -> (s, x))
+	(State s') >>= f = State $ \s -> let (newstate, a) = s' s
+					     (State g) = f a
+					     in g newstate
